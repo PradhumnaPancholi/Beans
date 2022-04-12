@@ -9,12 +9,10 @@ import "base64-sol/base64.sol";
 /// @author Pradhumna Pancholi ///
 /// @title Beans ///
 
-contract Beans is Ownable, ERC721URIStorage {
+contract Lines is Ownable, ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     bool public paused = false;
-    string constant URI =
-        "ipfs://QmWxGQE4t8LvSUTznadopLGzq9byNWttEg8XYUpvYh18T1";
 
     constructor() ERC721("Beans", "BNS") {}
 
@@ -23,14 +21,21 @@ contract Beans is Ownable, ERC721URIStorage {
         _tokenIds.increment();
         uint256 tokenId = _tokenIds.current();
         _safeMint(msg.sender, tokenId);
-        string memory tokenURI = formatMetaData("test");
-        _setTokenURI(tokenId, tokenURI);
+        string memory image = getImageURI();
+        string memory metadataURI = formatMetaData(image);
+        _setTokenURI(tokenId, metadataURI);
         return tokenId;
     }
 
     function getImageURI() public pure returns (string memory) {
         string memory prefix = "data:image/svg+xml;base64,";
-        string base64SVG = Base64.encode(bytes(string(abi.encodePacked(svg))));
+        string
+            memory svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> <line x1="0" y1="80" x2="100" y2="20" stroke="black" /></svg>';
+        string memory base64SVG = Base64.encode(
+            bytes(string(abi.encodePacked(svg)))
+        );
+        string memory assetURI = string(abi.encodePacked(prefix, base64SVG));
+        return assetURI;
     }
 
     function formatMetaData(string memory _imageURI)
@@ -39,21 +44,26 @@ contract Beans is Ownable, ERC721URIStorage {
         returns (string memory)
     {
         string memory prefix = "data:application/json;base64,";
-        return
-            string(
-                abi.encodePacked(
-                    prefix,
-                    Base64.encode(
-                        bytes(
-                            abi.encodePacked(
-                                '{"name": "Beans",',
-                                '"description": "An on-chain svg NFT",'
-                                // '"image":"', _imageURI,'"}"
-                            )
+        string memory base64Metadata = string(
+            abi.encodePacked(
+                prefix,
+                Base64.encode(
+                    bytes(
+                        abi.encodePacked(
+                            '{"name": "Beans",',
+                            '"description": "An on-chain svg NFT",'
+                            '"image":"',
+                            _imageURI,
+                            '"}'
                         )
                     )
                 )
-            );
+            )
+        );
+        string memory metadataURI = string(
+            abi.encodePacked(prefix, base64Metadata)
+        );
+        return metadataURI;
     }
 
     function pause() external onlyOwner returns (bool) {
