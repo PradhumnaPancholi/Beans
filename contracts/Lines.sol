@@ -14,7 +14,7 @@ contract Lines is Ownable, ERC721URIStorage {
     Counters.Counter private _tokenIds;
     bool public paused = false;
 
-    constructor() ERC721("Beans", "BNS") {}
+    constructor() ERC721("Lines", "LNS") {}
 
     function mint() external returns (uint256) {
         require(paused == false, "Contract is paused!!!");
@@ -60,10 +60,7 @@ contract Lines is Ownable, ERC721URIStorage {
                 )
             )
         );
-        string memory metadataURI = string(
-            abi.encodePacked(prefix, base64Metadata)
-        );
-        return metadataURI;
+        return base64Metadata;
     }
 
     function pause() external onlyOwner returns (bool) {
