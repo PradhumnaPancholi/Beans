@@ -31,9 +31,7 @@ contract Lines is Ownable, ERC721URIStorage {
         string memory prefix = "data:image/svg+xml;base64,";
         string
             memory svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> <line x1="0" y1="80" x2="100" y2="20" stroke="black" /></svg>';
-        string memory base64SVG = Base64.encode(
-            bytes(string(abi.encodePacked(svg)))
-        );
+        string memory base64SVG = Base64.encode(bytes((svg)));
         string memory assetURI = string(abi.encodePacked(prefix, base64SVG));
         return assetURI;
     }
@@ -50,7 +48,7 @@ contract Lines is Ownable, ERC721URIStorage {
                 Base64.encode(
                     bytes(
                         abi.encodePacked(
-                            '{"name": "Beans",',
+                            '{"name": "Lines",',
                             '"description": "An on-chain svg NFT",'
                             '"image":"',
                             _imageURI,
